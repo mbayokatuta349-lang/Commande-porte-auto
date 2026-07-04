@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Systeme de Controle d'une Porte - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #eef4ff;
+            --surface: #ffffff;
+            --surface-soft: #f5f8ff;
+            --dark-blue: #091433;
+            --panel-blue: #0f2146;
+            --panel-blue-soft: #16325e;
+            --accent: #2f6ce4;
+            --accent-strong: #1f4ed8;
+            --accent-soft: #d9e5ff;
+            --blue-button: #2d6ce5;
+            --blue-button-strong: #1d4ed8;
+            --green: #16a34a;
+            --green-soft: #dcfce7;
+            --btn-danger: #ef4444;
+            --door-wood: #b45309;
+            --door-dark: #92400e;
+            --gray: #64748b;
+            --shadow: rgba(15, 23, 42, 0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(79, 139, 255, 0.16), transparent 24%),
+                linear-gradient(135deg, #f8fbff 0%, var(--bg-color) 100%);
+            color: var(--dark-blue);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Barre de navigation */
+        .navbar {
+            background: linear-gradient(90deg, var(--panel-blue) 0%, var(--dark-blue) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            position: relative;
+            z-index: 100;
+            box-shadow: 0 2px 14px rgba(9, 20, 51, 0.16);
+            height: 50px;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .nav-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Menu Deroulant */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 20px;
+            background-color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            width: 160px;
+            z-index: 200;
+            border-radius: 12px;
+        }
+
+        .dropdown-menu button {
+            background: none;
+            border: none;
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 14px;
+            cursor: pointer;
+            color: #333;
+        }
+        
+        .dropdown-menu button:hover {
+            background-color: #f0f4f8;
+            border-radius: 12px;
+        }
+
+        /* BANDEAU DE STATUT */
+        .status-banner {
+            background-color: var(--surface-soft);
+            color: var(--dark-blue);
+            margin: 10px auto 0 auto;
+            padding: 10px 16px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(79, 139, 255, 0.18);
+            min-height: 48px;
+            width: calc(100% - 30px);
+            max-width: 700px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        /* GRILLE PRINCIPALE COMPACTE EN ARRONDI */
+        .main-dashboard {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 10px 15px 15px 15px;
+            align-items: stretch;
+            height: calc(100vh - 130px);
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 800px) {
+            .main-dashboard {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 1.2fr;
+                gap: 15px;
+                padding-top: 40px;
+            }
+        }
+
+        /* ZONE PORTE CORRIGEE EN ARRONDI */
+        .display-panel {
+            background: linear-gradient(150deg, #ffffff 0%, var(--surface-soft) 100%);
+            border-radius: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+            padding: 16px;
+            border: 1px solid rgba(47, 108, 229, 0.16);
+            transform: translateY(-30px);
+        }
+
+        @media (max-width: 800px) {
+            .display-panel {
+                transform: translateY(-30px);
+            }
+        }
+
+        .tech-door-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-height: 230px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 400px;
+        }
+
+        .door-frame {
+            width: 95px;
+            height: 150px;
+            border: 5px solid var(--dark-blue);
+            border-bottom: none;
+            background-color: #2c3e50;
+            padding: 4px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            z-index: 2;
+            display: flex;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .door-illustration {
+            width: 100%;
+            height: 100%;
+            background-color: var(--door-wood);
+            border: 2px solid var(--door-dark);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            padding: 6px;
+            gap: 6px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.3);
+            transition: transform 0.8s ease-in-out, opacity 0.3s;
+            transform-origin: left center;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .door-illustration.open {
+            transform: rotateY(-110deg);
+        }
+        
+        .door-panel {
+            flex: 1;
+            background-color: var(--door-dark);
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.4);
+            border-radius: 6px;
+        }
+        
+        .door-handle {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 7px;
+            height: 12px;
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            border: 1px solid #d35400;
+            border-radius: 3px;
+            box-shadow: 1px 2px 4px rgba(0,0,0,0.4);
+        }
+
+        .circuit-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.5;
+        }
+
+        /* Zone Droite : Panneau de Controle CORRIGE EN ARRONDI */
+        .control-panel {
+            background: linear-gradient(180deg, var(--panel-blue) 0%, var(--panel-blue-soft) 100%);
+            border-radius: 28px;
+            padding: 16px 18px 22px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 14px;
+            box-shadow: 0 18px 40px rgba(15,23,42,0.18);
+            position: relative;
+            min-height: 320px;
+        }
+
+        /* GROS BOUTON CIRCULAIRE */
+        .main-circle-btn {
+            width: 148px;
+            height: 148px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue-button) 0%, var(--blue-button-strong) 100%);
+            border: 5px solid rgba(255,255,255,0.45);
+            color: white;
+            font-size: 22px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 18px 42px rgba(24, 101, 224, 0.32);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            letter-spacing: 0.8px;
+            margin-top: -85px;
+            z-index: 10;
+            transition: transform 0.15s ease, background 0.2s, opacity 0.3s;
+        }
+
+        .main-circle-btn:active:not(.manual-disabled) {
+            transform: scale(0.95);
+        }
+
+        .main-circle-btn.manual-disabled {
+            border-color: #7f8c8d;
+            background-color: #1a252f;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .voice-wave-icon {
+            font-size: 15px;
+            color: var(--accent-soft);
+            margin-top: 6px;
+        }
+
+        /* Bouton vocal pilule */
+        .vocal-btn {
+            background-color: var(--blue-button);
+            color: white;
+            border: none;
+            width: 100%;
+            max-width: 320px;
+            padding: 12px 18px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 12px 24px rgba(45, 108, 229, 0.25);
+        }
+
+        .vocal-btn.listening {
+            background-color: var(--accent-strong);
+            box-shadow: 0 12px 24px rgba(31, 78, 216, 0.28);
+        }
+
+        /* Boutons de connexion bas */
+        .bottom-buttons {
+            display: flex;
+            width: 100%;
+            max-width: 320px;
+            gap: 15px;
+        }
+
+        .bottom-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        .bottom-btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-connect { background-color: var(--green); }
+        .btn-disconnect { background-color: var(--btn-danger); }
+
+        /* Etat desactive visuel si hors ligne */
+        .offline {
+            opacity: 0.5;
+            cursor: not-allowed !important;
+        }
+
+        /* Fenetre modale */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 25px;
+            text-align: center;
+        }
+
+        .close-modal-btn {
+            background-color: var(--blue-button);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <button class="menu-btn" id="menuBtn"><i class="fa-solid fa-bars"></i></button>
+        <div class="nav-title">SYSTEME DE CONTROLE DE PORTE AUTOMATISEE</div>
+        
+        <div class="dropdown-menu" id="dropdownMenu">
+            <button id="aboutBtn"><i class="fa-solid fa-circle-info"></i> A-propos</button>
+        </div>
+    </nav>
+
+    <div class="status-banner" id="statusText">
+        Systeme hors ligne. Cliquez sur CONNEXION.
+    </div>
+
+    <main class="main-dashboard">
+        
+        <section class="display-panel">
+            <div class="tech-door-container">
+                <div class="circuit-lines">
+                    <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20,100 L60,100 M140,100 L180,100 M40,60 L75,90 M160,60 L125,90 M40,140 L75,110 M160,140 L125,110" stroke="#f47b13" stroke-width="2" fill="none"/>
+                        <circle cx="20" cy="100" r="4" fill="#f47b13"/>
+                        <circle cx="180" cy="100" r="4" fill="#f47b13"/>
+                        <circle cx="40" cy="60" r="4" fill="#f47b13"/>
+                        <circle cx="160" cy="60" r="4" fill="#f47b13"/>
+                        <circle cx="40" cy="140" r="4" fill="#f47b13"/>
+                        <circle cx="160" cy="140" r="4" fill="#f47b13"/>
+                    </svg>
+                </div>
+                <div class="door-frame">
+                    <div class="door-illustration" id="doorVisual">
+                        <div class="door-panel"></div>
+                        <div class="door-panel"></div>
+                        <div class="door-handle"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="control-panel">
+            
+            <button class="main-circle-btn offline" id="doorToggleBtn">
+                <span>---</span>
+                <div class="voice-wave-icon">
+                    <i class="fa-solid fa-lines-leaning"></i> <i class="fa-solid fa-waveform-lines"></i> <i class="fa-solid fa-bars"></i>
+                </div>
+            </button>
+
+            <button class="vocal-btn offline" id="vocalBtn">
+                <i class="fa-solid fa-microphone" id="vocalIcon"></i> <span id="vocalText">ACTIVER COMMANDE VOCALE</span>
+            </button>
+
+            <div class="bottom-buttons">
+                <button class="bottom-btn btn-connect" id="btnConnect">Connexion</button>
+                <button class="bottom-btn btn-disconnect" id="btnDisconnect">Deconnexion</button>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="aboutModal">
+        <div class="modal-content">
+            <h2>A Propos</h2>
+            <p>
+                <br><strong>Systeme embarqué de commande et de controle d'une porte par commande vocale.</strong>
+            </p>
+            <p><br>Cette application de controle securisee a ete developpee par un groupe d'etudiants de L2 Informatique Industrielle, dont: <br><strong>Shandy, Ba Fana, Isaac, Bila,...</strong>.</p>
+            <button class="close-modal-btn" id="closeModal">Fermer</button>
+        </div>
+    </div>
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics.js";
+    import { getDatabase, ref, set, onValue, off } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+        apiKey: "AIzaSyC6hKmZy5e21BkZ9t4tbDKtPtUmVFgZhhQ",
+        authDomain: "commandeporte-7de0b.firebaseapp.com",
+        databaseURL: "https://commandeporte-7de0b-default-rtdb.firebaseio.com",
+        projectId: "commandeporte-7de0b",
+        storageBucket: "commandeporte-7de0b.firebasestorage.app",
+        messagingSenderId: "117600280482",
+        appId: "1:117600280482:web:9ca35a39918116a65c9cfb",
+        measurementId: "G-CLVRW0JJBB"
+    };
+    
+    let db = null;
+    let porteRef = null; // primary ref used to listen (we attach listeners to multiple paths)
+    let setTargetRef = null; // ref used for writing (will be chosen after we inspect data shape)
+    let firebaseReady = false;
+    let rootFirebaseRef = null;
+    let nestedFirebaseRef = null;
+
+    try {
+        const app = initializeApp(firebaseConfig);
+        getAnalytics(app);
+        db = getDatabase(app);
+        // prefer the simple root key `porte` (matches current DB screenshot); still we'll listen both
+        porteRef = ref(db, 'porte');
+        setTargetRef = ref(db, 'porte');
+        firebaseReady = true;
+        console.log('Firebase initialisé', { databaseURL: firebaseConfig.databaseURL });
+    } catch (error) {
+        console.warn('Initialisation Firebase impossible, mode local actif :', error);
+    }
+
+    let statutActuel = null; 
+    let modeVocalActif = false; 
+    let estConnecte = false; 
+
+    const doorToggleBtn = document.getElementById('doorToggleBtn');
+    const statusText = document.getElementById('statusText');
+    const vocalBtn = document.getElementById('vocalBtn');
+    const vocalText = document.getElementById('vocalText');
+    const vocalIcon = document.getElementById('vocalIcon');
+    const doorVisual = document.getElementById('doorVisual');
+    
+    const btnConnect = document.getElementById('btnConnect');
+    const btnDisconnect = document.getElementById('btnDisconnect');
+
+    if (!btnConnect || !btnDisconnect) {
+        console.error('Boutons de connexion introuvables dans le DOM');
+    }
+
+    // LOGIQUE DE PAROLE AUDIO (TTS)
+    function parler(message) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); 
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.lang = 'fr-FR';
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+    
+    // --- MOTEUR DE RECONNAISSANCE VOCALE ---
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'fr-FR';
+        recognition.continuous = true;
+        recognition.interimResults = false;
+
+        recognition.onstart = () => {
+            statusText.innerText = "Écoute active... Dites OUVRIR ou FERMER";
+            statusText.style.backgroundColor = "#def7ec"; 
+            statusText.style.color = "#03543f";
+        };
+
+        recognition.onresult = (event) => {
+            if (!estConnecte) return;
+            
+            const lastResultIndex = event.results.length - 1;
+            const phrase = event.results[lastResultIndex][0].transcript.toLowerCase().trim();
+            
+            if (phrase.includes("ouvrir") || phrase.includes("ouvre")) {
+                statusText.innerText = "Commande : OUVRIR";
+                if (firebaseReady && setTargetRef) {
+                    set(setTargetRef, true).catch(e => console.error('Erreur ecriture Firebase', e));
+                } else {
+                    statutActuel = true;
+                    rafraichirMessageStatut(null);
+                }
+            } 
+            else if (phrase.includes("fermer") || phrase.includes("ferme")) {
+                statusText.innerText = "Commande : FERMER";
+                if (firebaseReady && setTargetRef) {
+                    set(setTargetRef, false).catch(e => console.error('Erreur ecriture Firebase', e));
+                } else {
+                    statutActuel = false;
+                    rafraichirMessageStatut(null);
+                }
+            } 
+            else {
+                statusText.innerText = "Commande inconnue";
+                parler("Commande inconnue");
+            }
+        };
+
+        recognition.onend = () => { 
+            if (modeVocalActif && estConnecte) {
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.log("Relance automatique du micro");
+                }
+            }
+        };
+        
+        recognition.onerror = (e) => {
+            if (e.error !== 'no-speech') {
+                desactiverVocal();
+            }
+        };
+    }
+    
+    
+    // FONCTION : ACTIVER LE MODE VOCAL
+    function activerVocal() {
+        if (!recognition) return;
+        modeVocalActif = true;
+
+        vocalText.innerText = "DESACTIVER COMMANDE VOCALE"; 
+        vocalIcon.className = "fa-solid fa-microphone-slash"; 
+        vocalBtn.classList.add('listening');
+        doorToggleBtn.classList.add('manual-disabled');
+
+        parler("Commande vocale activee. Mode manuel verrouille.");
+        recognition.start();
+    }
+
+    // FONCTION : DESACTIVER LE MODE VOCAL
+    function desactiverVocal() {
+        modeVocalActif = false;
+        if(recognition) recognition.stop();
+        
+        vocalText.innerText = "ACTIVER COMMANDE VOCALE"; 
+        vocalIcon.className = "fa-solid fa-microphone";
+        vocalBtn.classList.remove('listening');
+        doorToggleBtn.classList.remove('manual-disabled');
+        
+        parler("Commande vocale desactivee. Retour au mode manuel."); 
+        rafraichirMessageStatut();
+    }
+
+    vocalBtn.addEventListener('click', () => {
+        if (!estConnecte) {
+            parler("Action impossible, vous etes hors ligne");
+            return;
+        }
+        if (!recognition) {
+            alert("Reconnaissance vocale indisponible sur ce navigateur.");
+            return;
+        }
+        
+        if (!modeVocalActif) {
+            activerVocal();
+        } else {
+            desactiverVocal();
+        }
+    });
+
+    // --- MISE A JOUR DE L'INTERFACE ET DE LA SIMULATION ---
+    function rafraichirMessageStatut(ancienStatut) {
+        if (!estConnecte) return;
+
+        if (statutActuel === true) {
+            doorVisual.classList.add('open');
+            doorToggleBtn.querySelector('span').innerText = "FERMER";
+
+            if (!modeVocalActif) {
+                statusText.style.backgroundColor = "var(--surface-soft)";
+                statusText.style.color = "var(--dark-blue)";
+                statusText.innerText = "Statut : La porte est actuellement OUVERTE";
+            }
+            if (ancienStatut !== null && ancienStatut !== true) parler("La porte s'ouvre");
+        } else {
+            doorVisual.classList.remove('open');
+            doorToggleBtn.querySelector('span').innerText = "OUVRIR";
+
+            if (!modeVocalActif) {
+                statusText.style.backgroundColor = "var(--surface-soft)";
+                statusText.style.color = "var(--dark-blue)";
+                statusText.innerText = "Statut : La porte est actuellement FERMEE";
+            }
+            if (ancienStatut !== null && ancienStatut !== false) parler("La porte se ferme");
+        }
+    }
+
+    // --- CONNEXION ET DECONNEXION ---
+    btnConnect.addEventListener('click', () => {
+        if (estConnecte) return;
+
+        estConnecte = true;
+        doorToggleBtn.classList.remove('offline');
+        vocalBtn.classList.remove('offline');
+        doorVisual.style.opacity = "1";
+
+        if (firebaseReady && porteRef) {
+            statusText.innerText = "Connexion etablie. Synchronisation Firebase...";
+
+            // helper to handle snapshots coming from either `porte` or `porte/statut`
+            function handleSnapshot(snapshot) {
+                const raw = snapshot.val();
+                if (raw === null) return; // nothing set here
+
+                // If the value is an object like { statut: true }, prefer the nested property
+                let value = raw;
+                if (typeof raw === 'object' && raw.hasOwnProperty('statut')) {
+                    value = raw.statut;
+                    // switch writer to nested path to avoid overwriting structure
+                    setTargetRef = ref(db, 'porte/statut');
+                } else {
+                    // otherwise keep writer at root `porte`
+                    setTargetRef = ref(db, 'porte');
+                }
+
+                if (value !== statutActuel) {
+                    const ancienStatut = statutActuel;
+                    statutActuel = value;
+                    rafraichirMessageStatut(ancienStatut);
+                }
+            }
+
+            // listen both to root `porte` and nested `porte/statut` for maximum compatibility
+            rootFirebaseRef = ref(db, 'porte');
+            nestedFirebaseRef = ref(db, 'porte/statut');
+            onValue(rootFirebaseRef, handleSnapshot);
+            onValue(nestedFirebaseRef, handleSnapshot);
+        } else {
+            statutActuel = false;
+            statusText.innerText = "Connexion etablie. Mode local actif.";
+            rafraichirMessageStatut(null);
+        }
+
+        parler("Connexion au systeme reussie");
+    });
+
+    btnDisconnect.addEventListener('click', () => {
+        if (!estConnecte) return;
+
+        if(modeVocalActif) {
+            desactiverVocal();
+        }
+
+        estConnecte = false;
+        statutActuel = null;
+        if (rootFirebaseRef) off(rootFirebaseRef);
+        if (nestedFirebaseRef) off(nestedFirebaseRef);
+
+        doorToggleBtn.classList.add('offline');
+        doorToggleBtn.classList.remove('manual-disabled');
+        vocalBtn.classList.add('offline');
+        doorVisual.style.opacity = "0.3";
+        doorVisual.classList.remove('open');
+        doorToggleBtn.querySelector('span').innerText = "---";
+
+        statusText.style.backgroundColor = "#fce8e6";
+        statusText.style.color = "var(--btn-red)";
+        statusText.innerText = "Systeme deconnecte. Mode hors ligne.";
+        
+        parler("Deconnexion du systeme");
+    });
+
+    doorToggleBtn.addEventListener('click', () => {
+        if (!estConnecte) {
+            parler("Action impossible, vous etes hors ligne");
+            return;
+        }
+        
+        if(modeVocalActif) {
+            parler("Le mode manuel est verrouille. Desactivez la commande vocale.");
+            return;
+        }
+        
+        if (statutActuel === false) {
+            if (firebaseReady && setTargetRef) {
+                set(setTargetRef, true).catch(e => console.error('Erreur ecriture Firebase', e));
+            } else {
+                statutActuel = true;
+                rafraichirMessageStatut(null);
+            }
+        } else {
+            if (firebaseReady && setTargetRef) {
+                set(setTargetRef, false).catch(e => console.error('Erreur ecriture Firebase', e));
+            } else {
+                statutActuel = false;
+                rafraichirMessageStatut(null);
+            }
+        }
+    });
+</script>
+
+<script>
+    const menuBtn = document.getElementById('menuBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const aboutBtn = document.getElementById('aboutBtn');
+    const aboutModal = document.getElementById('aboutModal');
+    const closeModal = document.getElementById('closeModal');
+
+    menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex';
+    });
+
+    document.addEventListener('click', () => { dropdownMenu.style.display = 'none'; });
+    aboutBtn.addEventListener('click', () => { aboutModal.style.display = 'flex'; });
+    closeModal.addEventListener('click', () => { aboutModal.style.display = 'none'; });
+</script>
+
+</body>
+</html>
