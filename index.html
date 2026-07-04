@@ -43,29 +43,47 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: 12px;
         }
 
         /* Barre de navigation */
         .navbar {
-            background: linear-gradient(90deg, var(--panel-blue) 0%, var(--dark-blue) 100%);
+            background: linear-gradient(90deg, var(--panel-blue) 0%, var(--panel-blue-soft) 100%);
             color: white;
             display: flex;
             align-items: center;
-            padding: 10px 20px;
+            padding: 12px 20px;
             position: relative;
             z-index: 100;
-            box-shadow: 0 2px 14px rgba(9, 20, 51, 0.16);
-            height: 50px;
+            box-shadow: 0 10px 25px rgba(9, 20, 51, 0.18);
+            border-radius: 22px;
+            min-height: 60px;
+            gap: 14px;
         }
 
         .menu-btn {
-            background: none;
-            border: none;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.32);
             color: white;
-            font-size: 20px;
+            width: 46px;
+            height: 46px;
+            font-size: 18px;
+            border-radius: 16px;
             cursor: pointer;
-            margin-right: 15px;
+            margin-right: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+
+        .menu-btn:hover {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.28);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
         }
 
         .nav-title {
@@ -127,24 +145,17 @@
         /* GRILLE PRINCIPALE COMPACTE EN ARRONDI */
         .main-dashboard {
             flex: 1;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            padding: 10px 15px 15px 15px;
-            align-items: stretch;
-            height: calc(100vh - 130px);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            padding: 7px 15px 15px 15px;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: calc(100vh - 160px);
             width: 100%;
             max-width: 700px;
             margin: 0 auto;
-        }
-
-        @media (max-width: 800px) {
-            .main-dashboard {
-                grid-template-columns: 1fr;
-                grid-template-rows: 1fr 1.2fr;
-                gap: 15px;
-                padding-top: 40px;
-            }
+            overflow-y: visible;
         }
 
         /* ZONE PORTE CORRIGEE EN ARRONDI */
@@ -157,13 +168,9 @@
             box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
             padding: 16px;
             border: 1px solid rgba(47, 108, 229, 0.16);
-            transform: translateY(-30px);
-        }
-
-        @media (max-width: 800px) {
-            .display-panel {
-                transform: translateY(-30px);
-            }
+            width: 100%;
+            max-width: 100%;
+            transform: translateY(0);
         }
 
         .tech-door-container {
@@ -175,6 +182,7 @@
             justify-content: center;
             align-items: center;
             perspective: 400px;
+            overflow: visible;
         }
 
         .door-frame {
@@ -185,9 +193,10 @@
             background-color: #2c3e50;
             padding: 4px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            z-index: 2;
+            z-index: 4;
             display: flex;
             border-radius: 12px 12px 0 0;
+            position: relative;
         }
 
         .door-illustration {
@@ -234,17 +243,35 @@
 
         .circuit-lines {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            opacity: 0.5;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 150%;
+            height: 150%;
+            z-index: 3;
+            opacity: 0.98;
+            filter: drop-shadow(0 0 8px rgba(244, 123, 19, 0.45));
+            pointer-events: none;
+        }
+
+        .circuit-lines path,
+        .circuit-lines circle {
+            stroke: #ffb84d;
+            stroke-width: 2.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .circuit-lines circle {
+            fill: #ffd27a;
         }
 
         /* Zone Droite : Panneau de Controle CORRIGE EN ARRONDI */
         .control-panel {
             background: linear-gradient(180deg, var(--panel-blue) 0%, var(--panel-blue-soft) 100%);
             border-radius: 28px;
-            padding: 16px 18px 22px;
+            padding: 65px 18px 28px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -252,7 +279,10 @@
             gap: 14px;
             box-shadow: 0 18px 40px rgba(15,23,42,0.18);
             position: relative;
-            min-height: 320px;
+            min-height: 300px;
+            margin-top: 0;
+            width: 100%;
+            max-width: 100%;
         }
 
         /* GROS BOUTON CIRCULAIRE */
@@ -272,7 +302,7 @@
             justify-content: center;
             align-items: center;
             letter-spacing: 0.8px;
-            margin-top: -85px;
+            margin-top: -80px;
             z-index: 10;
             transition: transform 0.15s ease, background 0.2s, opacity 0.3s;
         }
@@ -326,6 +356,7 @@
             width: 100%;
             max-width: 320px;
             gap: 15px;
+            margin-top: 4px;
         }
 
         .bottom-btn {
@@ -385,6 +416,30 @@
             border-radius: 15px;
             margin-top: 15px;
         }
+
+        .footer {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto 10px auto;
+            padding: 12px 16px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.72);
+            backdrop-filter: blur(12px);
+            color: rgba(15, 23, 42, 0.72);
+            font-size: 13px;
+            text-align: center;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -408,13 +463,13 @@
             <div class="tech-door-container">
                 <div class="circuit-lines">
                     <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20,100 L60,100 M140,100 L180,100 M40,60 L75,90 M160,60 L125,90 M40,140 L75,110 M160,140 L125,110" stroke="#f47b13" stroke-width="2" fill="none"/>
-                        <circle cx="20" cy="100" r="4" fill="#f47b13"/>
-                        <circle cx="180" cy="100" r="4" fill="#f47b13"/>
-                        <circle cx="40" cy="60" r="4" fill="#f47b13"/>
-                        <circle cx="160" cy="60" r="4" fill="#f47b13"/>
-                        <circle cx="40" cy="140" r="4" fill="#f47b13"/>
-                        <circle cx="160" cy="140" r="4" fill="#f47b13"/>
+                        <path d="M24,96 L76,96 M124,96 L176,96 M38,40 L82,84 M162,40 L122,86 M38,152 L82,110 M162,152 L122,114" stroke="#f47b13" stroke-width="3" fill="none"/>
+                        <circle cx="24" cy="96" r="5" fill="#f47b13"/>
+                        <circle cx="176" cy="96" r="5" fill="#f47b13"/>
+                        <circle cx="38" cy="40" r="5" fill="#f47b13"/>
+                        <circle cx="162" cy="40" r="5" fill="#f47b13"/>
+                        <circle cx="38" cy="152" r="5" fill="#f47b13"/>
+                        <circle cx="162" cy="152" r="5" fill="#f47b13"/>
                     </svg>
                 </div>
                 <div class="door-frame">
@@ -431,9 +486,6 @@
             
             <button class="main-circle-btn offline" id="doorToggleBtn">
                 <span>---</span>
-                <div class="voice-wave-icon">
-                    <i class="fa-solid fa-lines-leaning"></i> <i class="fa-solid fa-waveform-lines"></i> <i class="fa-solid fa-bars"></i>
-                </div>
             </button>
 
             <button class="vocal-btn offline" id="vocalBtn">
@@ -447,13 +499,17 @@
         </section>
     </main>
 
+    <footer class="footer">
+        © 2026 Système de contrôle de porte. Devshinobi.
+    </footer>
+
     <div class="modal" id="aboutModal">
         <div class="modal-content">
             <h2>A Propos</h2>
             <p>
                 <br><strong>Systeme embarqué de commande et de controle d'une porte par commande vocale.</strong>
             </p>
-            <p><br>Cette application de controle securisee a ete developpee par un groupe d'etudiants de L2 Informatique Industrielle, dont: <br><strong>Shandy, Ba Fana, Isaac, Bila,...</strong>.</p>
+            <p><br>Cette application de controle securisee a ete developpee par un groupe d'etudiants de L2 Informatique Industrielle ( Groupe Nsona - nkulu / Zongo), dont: <br><strong>Mbayo, Wazaya, Kiamosi, Kabu,...</strong>.</p>
             <button class="close-modal-btn" id="closeModal">Fermer</button>
         </div>
     </div>
