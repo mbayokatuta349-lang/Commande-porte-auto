@@ -2,13 +2,11 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Systeme de Commande d'une Porte - Dashboard</title>
-    <!-- Chargement des icônes de la bibliothèque FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* Déclaration des variables de couleur globales (Thème) */
         :root {
             --bg-color: #eef4ff;
             --surface: #ffffff;
@@ -30,81 +28,77 @@
             --shadow: rgba(15, 23, 42, 0.18);
         }
 
-        /* Reset CSS basique pour uniformiser les marges et l'affichage */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Configuration du fond de la page avec un dégradé fluide */
         body {
             background:
                 radial-gradient(circle at top left, rgba(79, 139, 255, 0.16), transparent 24%),
                 linear-gradient(135deg, #f8fbff 0%, var(--bg-color) 100%);
             color: var(--dark-blue);
-            min-height: 100vh;
+            height: 100vh;
+            height: 100dvh;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
-            overflow-y: auto;
-            padding: 12px; /* Marge externe globale gauche/droite équilibrée */
+            overflow: hidden;
+            padding: 8px 12px;
         }
 
-        /* Barre de navigation supérieure */
+        /* Barre de navigation */
         .navbar {
             background: linear-gradient(90deg, var(--panel-blue) 0%, var(--panel-blue-soft) 100%);
             color: white;
             display: flex;
             align-items: center;
-            padding: 6px 16px;
+            padding: 0 16px;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 100;
             box-shadow: 0 10px 25px rgba(9, 20, 51, 0.18);
-            min-height: 52px;
+            height: 50px;
             gap: 12px;
         }
 
-        /* Bouton Menu Burger de la navbar */
         .menu-btn {
             background: rgba(255, 255, 255, 0.18);
             border: 1px solid rgba(255, 255, 255, 0.32);
             color: white;
-            width: 38px;
-            height: 38px;
-            font-size: 16px;
-            border-radius: 12px;
+            width: 36px;
+            height: 36px;
+            font-size: 15px;
+            border-radius: 10px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s ease, background 0.2s ease;
+            transition: background 0.2s ease;
         }
 
         .menu-btn:hover {
-            transform: translateY(-1px);
             background: rgba(255, 255, 255, 0.28);
         }
 
-        /* Titre principal dans la navbar */
         .nav-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             letter-spacing: 0.5px;
         }
 
-        /* Menu Déroulant (Dropdown) rattaché au menu burger */
+        /* Menu Déroulant */
         .dropdown-menu {
             position: absolute;
             top: 100%;
             left: 16px;
             background-color: white;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: none; /* Masqué par défaut, géré en JS */
+            display: none;
             flex-direction: column;
             width: 150px;
             z-index: 200;
@@ -126,83 +120,86 @@
             border-radius: 12px;
         }
 
-        /* Bandeau d'affichage des messages de statut (Connecté, ouvert...) */
+        /* BANDEAU DE STATUT */
         .status-banner {
             background-color: var(--surface-soft);
             color: var(--dark-blue);
-            margin: 64px auto 0 auto; /* Espace sous la navbar fixe */
-            padding: 10px 16px;
+            margin: 58px auto 0 auto;
+            padding: 8px 16px;
             text-align: center;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
-            border-radius: 14px;
-            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-            border: 1px solid rgba(79, 139, 255, 0.18);
-            min-height: 42px;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+            border: 1px solid rgba(79, 139, 255, 0.14);
+            height: 38px;
             width: 100%;
-            max-width: 620px; /* Resserre la disposition */
+            max-width: 500px;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 50;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
         }
 
-        /* Alignement compact central de l'application */
+        /* CONTENEUR PRINCIPAL */
         .main-dashboard {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            padding: 10px 0;
+            gap: 12px;
+            padding: 8px 0;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: space-between;
             width: 100%;
-            max-width: 620px;
+            max-width: 500px;
             margin: 0 auto;
+            min-height: 0;
         }
 
-        /* Cadre blanc accueillant l'illustration de la porte */
+        /* SECTION DE LA PORTE */
         .display-panel {
             background: linear-gradient(150deg, #ffffff 0%, var(--surface-soft) 100%);
             border-radius: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
             padding: 16px;
-            border: 1px solid rgba(47, 108, 229, 0.16);
+            border: 1px solid rgba(47, 108, 229, 0.12);
             width: 100%;
+            flex: 2 1 200px;
+            min-height: 160px;
         }
 
-        /* Conteneur gérant l'environnement 3D de la porte */
         .tech-door-container {
             position: relative;
             width: 100%;
-            max-width: 280px;
-            height: 180px;
+            max-width: 240px;
+            height: 100%;
+            max-height: 160px;
             display: flex;
             justify-content: center;
             align-items: center;
-            perspective: 600px; /* Force l'effet d'éloignement/profondeur 3D */
-            overflow: visible; /* Laisse le vantail pivoter en dehors de sa boîte */
+            perspective: 600px;
+            overflow: visible;
         }
 
-        /* Bâti fixe (Cadre extérieur) de la porte */
         .door-frame {
-            width: 85px;
-            height: 135px;
-            border: 5px solid var(--dark-blue);
+            width: 84px;
+            height: 130px;
+            border: 4px solid var(--dark-blue);
             border-bottom: none;
             background-color: #2c3e50;
             padding: 2px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
             z-index: 4;
             display: flex;
-            border-radius: 8px 8px 0 0;
+            border-radius: 6px 6px 0 0;
             position: relative;
         }
 
-        /* Le battant/vantail de la porte (Partie mobile) */
         .door-illustration {
             width: 100%;
             height: 100%;
@@ -212,96 +209,91 @@
             display: flex;
             flex-direction: column;
             justify-content: space-around;
-            padding: 4px;
-            gap: 4px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+            padding: 3px;
+            gap: 3px;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
             transition: transform 0.6s ease-in-out, opacity 0.3s;
-            transform-origin: left center; /* La porte pivote sur son axe gauche (charnière) */
-            border-radius: 5px 5px 0 0;
+            transform-origin: left center;
+            border-radius: 4px 4px 0 0;
         }
 
-        /* Classe active ajoutée en JS pour déclencher l'ouverture 3D */
         .door-illustration.open {
             transform: rotateY(-115deg);
         }
         
-        /* Panneaux décoratifs en bois de la porte */
         .door-panel {
             flex: 1;
             background-color: var(--door-dark);
             border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
-            border-radius: 4px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
+            border-radius: 3px;
         }
         
-        /* Poignée dorée de la porte */
         .door-handle {
             position: absolute;
-            right: 5px;
+            right: 4px;
             top: 50%;
             transform: translateY(-50%);
-            width: 6px;
-            height: 10px;
+            width: 5px;
+            height: 9px;
             background: linear-gradient(135deg, #f1c40f, #f39c12);
             border: 1px solid #d35400;
-            border-radius: 2px;
+            border-radius: 1px;
         }
 
-        /* Dessins de circuits électroniques en arrière-plan */
         .circuit-lines {
             position: absolute;
             width: 140%;
             height: 140%;
             z-index: 3;
             opacity: 0.85;
-            pointer-events: none; /* Rend le SVG insensible aux clics */
+            pointer-events: none;
         }
 
-        /* Bloc de commande inférieur (Panneau bleu) */
+        /* PANNEAU DE CONTROLE */
         .control-panel {
             background: linear-gradient(180deg, var(--panel-blue) 0%, var(--panel-blue-soft) 100%);
-            border-radius: 24px;
-            padding: 78px 16px 22px; /* Marges ajustées pour le bouton rabaissé */
+            border-radius: 22px;
+            padding: 55px 16px 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            gap: 14px;
-            box-shadow: 0 15px 35px rgba(15,23,42,0.15);
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 12px 30px rgba(15,23,42,0.15);
             position: relative;
             width: 100%;
-            margin-top: 30px; 
+            margin-top: 50px;
+            flex-shrink: 0;
         }
 
-        /* Gros bouton principal manuel (Abaissé pour l'esthétique UI) */
+        /* BOUTON CENTRAL */
         .main-circle-btn {
-            width: 112px;
-            height: 112px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--blue-button) 0%, var(--blue-button-strong) 100%);
             border: 4px solid rgba(255,255,255,0.55);
             color: white;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 800;
             cursor: pointer;
-            box-shadow: 0 10px 25px rgba(24, 101, 224, 0.35);
+            box-shadow: 0 8px 20px rgba(24, 101, 224, 0.3);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             letter-spacing: 0.5px;
             position: absolute;
-            top: -42px; /* Ajusté (descendu de -55px à -42px) */
+            top: -55px;
             z-index: 10;
             transition: transform 0.15s ease, opacity 0.3s;
         }
 
-        /* Petit effet d'enfoncement lors du clic */
         .main-circle-btn:active:not(.manual-disabled) {
             transform: scale(0.95);
         }
 
-        /* Style visuel quand le mode manuel est bloqué (pendant l'écoute vocale) */
         .main-circle-btn.manual-disabled {
             border-color: #7f8c8d;
             background: #1a252f;
@@ -309,14 +301,15 @@
             opacity: 0.6;
         }
 
-        /* Bouton d'activation de la reconnaissance vocale */
+        /* Bouton vocal pilule */
         .vocal-btn {
             background-color: var(--blue-button);
             color: white;
             border: none;
             width: 100%;
-            max-width: 300px;
-            padding: 12px 18px;
+            max-width: 280px;
+            padding: 11px 16px;
+            margin: 15px;
             font-size: 12px;
             font-weight: 700;
             border-radius: 999px;
@@ -326,34 +319,34 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 8px 20px rgba(45, 108, 229, 0.2);
+            box-shadow: 0 6px 16px rgba(45, 108, 229, 0.18);
         }
 
-        /* Classe active quand le micro capte du son */
         .vocal-btn.listening {
             background-color: var(--accent-strong);
-            box-shadow: 0 8px 20px rgba(31, 78, 216, 0.25);
+            box-shadow: 0 6px 16px rgba(31, 78, 216, 0.22);
         }
 
-        /* Alignement des boutons horizontaux de connexion */
+        /* Boutons de connexion bas */
         .bottom-buttons {
             display: flex;
+            margin: 5px;
             width: 100%;
-            max-width: 300px;
-            gap: 14px;
+            max-width: 280px;
+            gap: 12px;
         }
 
         .bottom-btn {
             flex: 1;
-            padding: 11px;
+            padding: 10px;
             border: none;
-            border-radius: 16px;
+            border-radius: 12px;
             color: white;
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             text-transform: uppercase;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
             transition: transform 0.1s;
         }
 
@@ -361,33 +354,30 @@
             transform: scale(0.95);
         }
 
-        /* Styles de couleurs pour les actions de connexion */
         .btn-connect { background-color: var(--green); }
         .btn-disconnect { background-color: var(--btn-danger); }
 
-        /* Assombrissement global si le système est hors-ligne */
         .offline {
             opacity: 0.5;
             cursor: not-allowed !important;
         }
 
-        /* Écran noir translucide en arrière-plan du pop-up */
+        /* Fenêtre modale */
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.6);
             z-index: 1000;
-            display: none; /* Géré via JS pour l'affichage */
+            display: none;
             justify-content: center;
             align-items: center;
         }
 
-        /* Conteneur principal du texte de la modale */
         .modal-content {
             background-color: white;
             padding: 24px;
             width: 90%;
-            max-width: 360px;
+            max-width: 340px;
             border-radius: 20px;
             text-align: center;
         }
@@ -396,52 +386,32 @@
             background-color: var(--blue-button);
             color: white;
             border: none;
-            padding: 8px 20px;
+            padding: 8px 18px;
             cursor: pointer;
             font-weight: bold;
-            border-radius: 12px;
+            border-radius: 10px;
             margin-top: 15px;
-        }
-
-        /* Footer de bas de page */
-        .footer {
-            width: 100%;
-            max-width: 620px;
-            margin: 6px auto;
-            padding: 10px;
-            border-radius: 14px;
-            background: rgba(255,255,255,0.72);
-            color: rgba(15, 23, 42, 0.72);
-            font-size: 12px;
-            text-align: center;
-            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
         }
     </style>
 </head>
 <body>
 
-    <!-- Barre de navigation -->
     <nav class="navbar">
         <button class="menu-btn" id="menuBtn"><i class="fa-solid fa-bars"></i></button>
         <div class="nav-title">SYSTEME DE COMMANDE D'UNE PORTE</div>
         
-        <!-- Menu flottant contextuel -->
         <div class="dropdown-menu" id="dropdownMenu">
             <button id="aboutBtn"><i class="fa-solid fa-circle-info"></i> A-propos</button>
         </div>
     </nav>
 
-    <!-- Affichage dynamique de l'état système -->
     <div class="status-banner" id="statusText">
         Systeme hors ligne. Cliquez sur CONNEXION.
     </div>
 
-    <!-- Centre de contrôle principal -->
     <main class="main-dashboard">
-        <!-- Section d'affichage graphique de la porte -->
         <section class="display-panel">
             <div class="tech-door-container">
-                <!-- Dessins vectoriels animés (lignes dorées) -->
                 <div class="circuit-lines">
                     <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                         <path d="M24,96 L76,96 M124,96 L176,96 M38,40 L82,84 M162,40 L122,86 M38,152 L82,110 M162,152 L122,114" stroke="#ffb84d" stroke-width="2.5" fill="none"/>
@@ -453,7 +423,6 @@
                         <circle cx="162" cy="152" r="4" fill="#ffd27a"/>
                     </svg>
                 </div>
-                <!-- Modèle physique de la porte -->
                 <div class="door-frame">
                     <div class="door-illustration" id="doorVisual">
                         <div class="door-panel"></div>
@@ -464,19 +433,15 @@
             </div>
         </section>
 
-        <!-- Section des boutons d'interaction matérielle -->
         <section class="control-panel">
-            <!-- Bouton ON/OFF central manuel -->
             <button class="main-circle-btn offline" id="doorToggleBtn">
                 <span>---</span>
             </button>
 
-            <!-- Bouton d'écoute vocale -->
             <button class="vocal-btn offline" id="vocalBtn">
                 <i class="fa-solid fa-microphone" id="vocalIcon"></i> <span id="vocalText">ACTIVER COMMANDE VOCALE</span>
             </button>
 
-            <!-- Liaison Réseau : Connexion / Déconnexion -->
             <div class="bottom-buttons">
                 <button class="bottom-btn btn-connect" id="btnConnect">Connexion</button>
                 <button class="bottom-btn btn-disconnect" id="btnDisconnect">Deconnexion</button>
@@ -484,29 +449,20 @@
         </section>
     </main>
 
-    <!-- Mentions de bas de page -->
-    <footer class="footer">
-        © 2026 Système de contrôle de porte. Devshinobi.
-    </footer>
-
-    <!-- Fenêtre Pop-up informative (A propos) -->
     <div class="modal" id="aboutModal">
         <div class="modal-content">
             <h2>A Propos</h2>
             <p><br><strong>Systeme embarqué de commande et de controle d'une porte par commande vocale.</strong></p>
-            <p><br>Cette application de controle securisee a ete developpee par un groupe d'etudiants de L2 Informatique Industrielle ( Groupe Nsona - nkulu / Zongo), dont: <br><strong>Mbayo, Wazaya, Kiamosi, Kabu,...</strong>.</p>
+            <p><br>Cette application de controle securisee a ete developpee par un groupe d'etudiants de L2 Informatique Industrielle ( Groupe Nsona - nkulu / Zongo), dont: <br><strong>Mbayo, Wazaya, Kiamosi, Kabu, Mpoyi,...</strong>.</p>
             <button class="close-modal-btn" id="closeModal">Fermer</button>
         </div>
     </div>
 
-<!-- LOGIQUE APPLICATIVE ET BACKEND (JAVASCRIPT) -->
 <script type="module">
-    // Importation des modules officiels requis depuis le CDN de Firebase v9
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics.js";
     import { getDatabase, ref, set, onValue, off } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-    // Variables de configuration d'accès à votre projet Firebase Realtime Database
     const firebaseConfig = {
         apiKey: "AIzaSyC6hKmZy5e21BkZ9t4tbDKtPtUmVFgZhhQ",
         authDomain: "commandeporte-7de0b.firebaseapp.com",
@@ -518,7 +474,6 @@
         measurementId: "G-CLVRW0JJBB"
     };
     
-    // Initialisation des variables globales de gestion de l'état réseau
     let db = null;
     let porteRef = null; 
     let setTargetRef = null; 
@@ -526,24 +481,21 @@
     let rootFirebaseRef = null;
     let nestedFirebaseRef = null;
 
-    // Tentative sécurisée de connexion à Firebase
     try {
         const app = initializeApp(firebaseConfig);
         getAnalytics(app);
         db = getDatabase(app);
-        porteRef = ref(db, 'porte'); // Écouteur par défaut sur le nœud parent
-        setTargetRef = ref(db, 'porte'); // Variable d'écriture par défaut
+        porteRef = ref(db, 'porte');
+        setTargetRef = ref(db, 'porte');
         firebaseReady = true;
     } catch (error) {
-        console.warn('Mode local actif (Échec liaison Firebase) :', error);
+        console.warn('Mode local actif :', error);
     }
 
-    // Variables d'état logique de l'application
-    let statutActuel = null; // true = ouvert, false = fermé
-    let modeVocalActif = false; // Suivi de l'état du micro
-    let estConnecte = false; // Suivi de l'état réseau (online/offline simulé)
+    let statutActuel = null; 
+    let modeVocalActif = false; 
+    let estConnecte = false; 
 
-    // Liaison des éléments graphiques HTML du DOM à manipuler
     const doorToggleBtn = document.getElementById('doorToggleBtn');
     const statusText = document.getElementById('statusText');
     const vocalBtn = document.getElementById('vocalBtn');
@@ -553,168 +505,191 @@
     const btnConnect = document.getElementById('btnConnect');
     const btnDisconnect = document.getElementById('btnDisconnect');
 
-    // MOTEUR TEXT-TO-SPEECH (Synthèse Vocale) : Fait parler le navigateur
     function parler(message) {
         if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); // Stoppe toute phrase en cours pour éviter les chevauchements
+            window.speechSynthesis.cancel(); 
             const utterance = new SpeechSynthesisUtterance(message);
-            utterance.lang = 'fr-FR'; // Configuration en langue française
+            utterance.lang = 'fr-FR';
             window.speechSynthesis.speak(utterance);
         }
     }
     
-    // MOTEUR SPEECH-RECOGNITION (Reconnaissance vocale)
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
 
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
         recognition.lang = 'fr-FR';
-        recognition.continuous = true; // Reste actif en continu tant qu'on ne l'arrête pas
-        recognition.interimResults = false; // Ne traite que les phrases complètes validées
+        recognition.continuous = true; 
+        recognition.interimResults = true;
 
-        // Événement : Déclenchement de l'écoute active
         recognition.onstart = () => {
-            statusText.innerText = "Écoute active... Dites OUVRIR ou FERMER";
-            statusText.style.backgroundColor = "#def7ec"; 
-            statusText.style.color = "#03543f";
+            if (modeVocalActif && estConnecte) {
+                // Statut d'attente par défaut lors de l'activation vocale
+                rafraichirMessageStatut(null);
+            }
         };
 
-        // Événement : Traitement des mots décodés par l'algorithme
         recognition.onresult = (event) => {
-            if (!estConnecte) return;
-            const lastResultIndex = event.results.length - 1;
-            const phrase = event.results[lastResultIndex][0].transcript.toLowerCase().trim();
+            if (!estConnecte || !modeVocalActif) return;
             
-            // Logique d'analyse de mots-clés
-            if (phrase.includes("ouvrir") || phrase.includes("ouvre")) {
-                if (firebaseReady && setTargetRef) {
-                    set(setTargetRef, true).catch(e => console.error(e)); // Envoi true à Firebase
-                } else {
-                    statutActuel = true;
-                    rafraichirMessageStatut(null); // Mode local de secours
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                const phrase = event.results[i][0].transcript.toLowerCase();
+                console.log("Flux capturé : ", phrase);
+
+                if (phrase.includes("ouvrir") || phrase.includes("ouvre")) {
+                    if (statutActuel !== true) {
+                        if (firebaseReady && setTargetRef) {
+                            set(setTargetRef, true).catch(e => console.error(e));
+                        } else {
+                            statutActuel = true;
+                            rafraichirMessageStatut(null);
+                        }
+                    }
+                } 
+                else if (phrase.includes("fermer") || phrase.includes("ferme") || phrase.includes("fermé") || phrase.includes("fermez")) {
+                    if (statutActuel !== false) {
+                        if (firebaseReady && setTargetRef) {
+                            set(setTargetRef, false).catch(e => console.error(e));
+                        } else {
+                            statutActuel = false;
+                            rafraichirMessageStatut(null);
+                        }
+                    }
                 }
-            } 
-            else if (phrase.includes("fermer") || phrase.includes("ferme")) {
-                if (firebaseReady && setTargetRef) {
-                    set(setTargetRef, false).catch(e => console.error(e)); // Envoi false à Firebase
-                } else {
-                    statutActuel = false;
-                    rafraichirMessageStatut(null); // Mode local de secours
-                }
-            } 
+            }
         };
 
-        // Relance automatique du micro s'il s'interrompt brusquement (gestion de timeout)
         recognition.onend = () => { 
             if (modeVocalActif && estConnecte) {
                 try { recognition.start(); } catch (e) {}
             }
         };
         
-        // Gestion des erreurs d'écoute (ex: aucun son capté)
         recognition.onerror = (e) => {
-            if (e.error !== 'no-speech') desactiverVocal();
+            if (e.error !== 'no-speech' && e.error !== 'aborted') {
+                console.error("Erreur reco vocale:", e.error);
+            }
         };
     }
     
-    // ACTIVER LA RECONNAISSANCE VOCALE
     function activerVocal() {
         if (!recognition) return;
         modeVocalActif = true;
         vocalText.innerText = "DESACTIVER COMMANDE VOCALE"; 
         vocalIcon.className = "fa-solid fa-microphone-slash"; 
         vocalBtn.classList.add('listening');
-        doorToggleBtn.classList.add('manual-disabled'); // Verrouille visuellement le bouton manuel
+        doorToggleBtn.classList.add('manual-disabled');
         parler("Commande vocale activee.");
-        recognition.start();
+        try { recognition.start(); } catch(e){}
     }
 
-    // DESACTIVER LA RECONNAISSANCE VOCALE
     function desactiverVocal() {
         modeVocalActif = false;
-        if(recognition) recognition.stop();
+        if(recognition) {
+            try { recognition.stop(); } catch(e){}
+        }
         vocalText.innerText = "ACTIVER COMMANDE VOCALE"; 
         vocalIcon.className = "fa-solid fa-microphone";
         vocalBtn.classList.remove('listening');
-        doorToggleBtn.classList.remove('manual-disabled'); // Libère le bouton manuel
+        doorToggleBtn.classList.remove('manual-disabled');
+        
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
         parler("Retour au mode manuel."); 
-        rafraichirMessageStatut();
+        
+        if (estConnecte) {
+            if (statutActuel === true) {
+                statusText.innerText = "Statut : La porte est actuellement OUVERTE";
+            } else {
+                statusText.innerText = "Statut : La porte est actuellement FERMEE";
+            }
+            statusText.style.backgroundColor = "var(--surface-soft)";
+            statusText.style.color = "var(--dark-blue)";
+        }
     }
 
-    // Gestion du clic sur le bouton pilule Vocal
     vocalBtn.addEventListener('click', () => {
         if (!estConnecte) {
             parler("Action impossible, vous etes hors ligne");
             return;
         }
         if (!recognition) {
-            alert("Reconnaissance vocale indisponible.");
+            alert("Reconnaissance vocale indisponible sur ce navigateur.");
             return;
         }
         if (!modeVocalActif) activerVocal(); else desactiverVocal();
     });
 
-    // METTRE À JOUR L'INTERFACES ET LES ANIMATIONS EN FONCTION DE L'ÉTAT DE LA PORTE
     function rafraichirMessageStatut(ancienStatut) {
         if (!estConnecte) return;
 
         if (statutActuel === true) {
-            doorVisual.classList.add('open'); // Lance l'animation CSS rotateY
+            doorVisual.classList.add('open');
             doorToggleBtn.querySelector('span').innerText = "FERMER";
-            if (!modeVocalActif) {
+            
+            // Mise à jour textuelle personnalisée du bandeau selon le mode actif
+            if (modeVocalActif) {
+                statusText.innerText = "Écoute continue... Porte ouverte";
+                statusText.style.backgroundColor = "#def7ec"; 
+                statusText.style.color = "#03543f";
+            } else {
                 statusText.innerText = "Statut : La porte est actuellement OUVERTE";
+                statusText.style.backgroundColor = "var(--surface-soft)";
+                statusText.style.color = "var(--dark-blue)";
             }
+            
             if (ancienStatut !== null && ancienStatut !== true) parler("La porte s'ouvre");
         } else {
-            doorVisual.classList.remove('open'); // Ferme la porte en enlevant la classe
+            doorVisual.classList.remove('open');
             doorToggleBtn.querySelector('span').innerText = "OUVRIR";
-            if (!modeVocalActif) {
+            
+            // Mise à jour textuelle personnalisée du bandeau selon le mode actif
+            if (modeVocalActif) {
+                statusText.innerText = "Écoute continue... Porte fermée";
+                statusText.style.backgroundColor = "#def7ec"; 
+                statusText.style.color = "#03543f";
+            } else {
                 statusText.innerText = "Statut : La porte est actuellement FERMEE";
+                statusText.style.backgroundColor = "var(--surface-soft)";
+                statusText.style.color = "var(--dark-blue)";
             }
+            
             if (ancienStatut !== null && ancienStatut !== false) parler("La porte se ferme");
         }
     }
 
-    // CLIC : GESTION DU BOUTON DE CONNEXION INITIALE
     btnConnect.addEventListener('click', () => {
         if (estConnecte) return;
         estConnecte = true;
-        doorToggleBtn.classList.remove('offline'); // Débloque le bouton
-        vocalBtn.classList.remove('offline'); // Débloque le vocal
+        doorToggleBtn.classList.remove('offline');
+        vocalBtn.classList.remove('offline');
         doorVisual.style.opacity = "1";
 
         if (firebaseReady && porteRef) {
             statusText.innerText = "Connexion etablie. Synchronisation...";
-            
-            // Traitement en temps réel des flux de données Firebase
             function handleSnapshot(snapshot) {
                 const raw = snapshot.val();
                 if (raw === null) return;
                 let value = raw;
-                
-                // Détection intelligente de la structure (Objet ou Booléen pur direct)
                 if (typeof raw === 'object' && raw.hasOwnProperty('statut')) {
                     value = raw.statut;
-                    setTargetRef = ref(db, 'porte/statut'); // Redirige les écritures futures sur le sous-nœud
+                    setTargetRef = ref(db, 'porte/statut');
                 } else {
                     setTargetRef = ref(db, 'porte');
                 }
-                
-                // Si la valeur lue change, mise à jour graphique du système
                 if (value !== statutActuel) {
                     const ancienStatut = statutActuel;
                     statutActuel = value;
                     rafraichirMessageStatut(ancienStatut);
                 }
             }
-            // Abonnement aux deux configurations de base de données possibles pour compatibilité maximale
             rootFirebaseRef = ref(db, 'porte');
             nestedFirebaseRef = ref(db, 'porte/statut');
             onValue(rootFirebaseRef, handleSnapshot);
             onValue(nestedFirebaseRef, handleSnapshot);
         } else {
-            // Reconfiguration par défaut en mode local si Firebase est inaccessible
             statutActuel = false;
             statusText.innerText = "Connexion etablie. Mode local actif.";
             rafraichirMessageStatut(null);
@@ -722,19 +697,15 @@
         parler("Connexion au systeme reussie");
     });
 
-    // CLIC : DECONNEXION DU SYSTEME (Mise hors-ligne sécurisée)
     btnDisconnect.addEventListener('click', () => {
         if (!estConnecte) return;
         if(modeVocalActif) desactiverVocal();
 
         estConnecte = false;
         statutActuel = null;
-        
-        // Désabonnement des flux Firebase (libération de mémoire)
         if (rootFirebaseRef) off(rootFirebaseRef);
         if (nestedFirebaseRef) off(nestedFirebaseRef);
 
-        // Réinitialisation visuelle de l'UI (Désactivation générale)
         doorToggleBtn.classList.add('offline');
         doorToggleBtn.classList.remove('manual-disabled');
         vocalBtn.classList.add('offline');
@@ -748,25 +719,23 @@
         parler("Deconnexion du systeme");
     });
 
-    // CLIC : INTERACTION MANUELLE AVEC LE BOUTON CENTRAL CIRCULAIRE
     doorToggleBtn.addEventListener('click', () => {
         if (!estConnecte) {
             parler("Action impossible, vous etes hors ligne");
             return;
         }
-        if(modeVocalActif) return; // Ignore l'action si le mode vocal a le contrôle exclusif
+        if(modeVocalActif) return;
         
-        const futurStatut = !statutActuel; // Inverse l'état binaire (Toggle)
+        const futurStatut = !statutActuel;
         if (firebaseReady && setTargetRef) {
-            set(setTargetRef, futurStatut).catch(e => console.error(e)); // Écrit sur Firebase
+            set(setTargetRef, futurStatut).catch(e => console.error(e));
         } else {
             statutActuel = futurStatut;
-            rafraichirMessageStatut(null); // Bascule locale directe
+            rafraichirMessageStatut(null);
         }
     });
 </script>
 
-<!-- SCRIPT CLASSIQUE : EFFETS ET CONTRÔLE DES FENÊTRES MODALES (INTERFACE SIMPLE) -->
 <script>
     const menuBtn = document.getElementById('menuBtn');
     const dropdownMenu = document.getElementById('dropdownMenu');
@@ -774,19 +743,12 @@
     const aboutModal = document.getElementById('aboutModal');
     const closeModal = document.getElementById('closeModal');
 
-    // Afficher/Masquer le menu déroulant
     menuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex';
     });
-    
-    // Ferme automatiquement le menu déroulant si on clique n'importe où ailleurs sur l'écran
     document.addEventListener('click', () => { dropdownMenu.style.display = 'none'; });
-    
-    // Ouvrir la boîte modale À Propos
     aboutBtn.addEventListener('click', () => { aboutModal.style.display = 'flex'; });
-    
-    // Fermer la boîte modale À Propos
     closeModal.addEventListener('click', () => { aboutModal.style.display = 'none'; });
 </script>
 </body>
